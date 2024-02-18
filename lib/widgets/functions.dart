@@ -35,11 +35,11 @@ Future<Map<String, Item>> getBarcodes() async {
     var line = lines[idx].split(',');
 
     Item item = Item(
-      barcode: line[0],
-      name: line[1],
-      price: double.parse(line[2]),
-      quantity: int.parse(line[3]),
-    );
+        barcode: line[0],
+        name: line[1],
+        price: double.parse(line[2]),
+        quantity: int.parse(line[3]),
+        discount: int.parse(line[4]));
 
     map[item.barcode] = item;
   }
@@ -51,14 +51,17 @@ Future<int> getTodaysTotalOrders() async {
   final prefs = await SharedPreferences.getInstance();
 
   String? date = prefs.getString('date');
+  int? countOfOrders = prefs.getInt('countOfOrders');
   String todayDate = DateTime.now().toString().substring(0, 10);
 
   if (date == null || date.compareTo(todayDate) != 0) {
     await prefs.setString('date', todayDate);
-    await prefs.setInt('count', 1);
+    await prefs.setInt('countOfOrders', 1);
   }
 
-  return prefs.getInt('count')!;
+  if (countOfOrders == null) await prefs.setInt('countOfOrders', 1);
+
+  return prefs.getInt('countOfOrders')!;
 }
 
 Future<String> getLatestBillNo() async {
@@ -128,7 +131,7 @@ Future<String> placeOrderAndGenerateBill(
     });
   }
 
-  String updatedData = "Barcode,Product Name,Price,Quantity\n";
+  String updatedData = "Barcode,Product Name,Price,Quantity,Discount\n";
   map.forEach((key, item) {
     updatedData += "${item.toString()}\n";
   });
@@ -148,7 +151,7 @@ Future<String> placeOrderAndGenerateBill(
   // Updating no. of orders for today
   int orders = int.parse(latestBillNo.substring(8));
   final prefs = await SharedPreferences.getInstance();
-  prefs.setInt('count', orders + 1);
+  prefs.setInt('countOfOrders', orders + 1);
 
   print(billInfo.toString());
   return billInfo.toString();
@@ -195,7 +198,7 @@ Future addOrUpdateItemsToFile(Map<String, Item> map, List<Item> itemList,
     map[item.barcode] = item;
   }
 
-  String updatedData = "Barcode,Product Name,Price,Quantity\n";
+  String updatedData = "Barcode,Product Name,Price,Quantity,Discount\n";
   map.forEach((key, item) {
     updatedData += "${item.toString()}\n";
   });
@@ -283,24 +286,24 @@ Future<td.Uint8List> printNewBarcodes(List<Item> itemList) async {
 Future<int> getTotalBarcodes() async {
   final prefs = await SharedPreferences.getInstance();
 
-  int? count = prefs.getInt('count');
+  int? countOfBarcodes = prefs.getInt('countOfBarcodes');
 
-  if (count == null) {
-    await prefs.setInt('count', 1);
+  if (countOfBarcodes == null) {
+    await prefs.setInt('countOfBarcodes', 1);
   }
 
-  return prefs.getInt('count')!;
+  return prefs.getInt('countOfBarcodes')!;
 }
 
 void setTotalBarcodes(int n) async {
   final prefs = await SharedPreferences.getInstance();
 
-  int? count = prefs.getInt('count');
+  int? countOfBarcodes = prefs.getInt('countOfBarcodes');
 
-  if (count == null) {
-    await prefs.setInt('count', 1);
+  if (countOfBarcodes == null) {
+    await prefs.setInt('countOfBarcodes', 1);
   } else {
-    await prefs.setInt('count', count + n);
+    await prefs.setInt('countOfBarcodes', countOfBarcodes + n);
   }
 }
 

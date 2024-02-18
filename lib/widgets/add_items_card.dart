@@ -24,6 +24,8 @@ class _AddItemsCardState extends State<AddItemsCard> {
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
+  TextEditingController discountController = TextEditingController();
+
   late Item item;
   late int idx;
 
@@ -32,11 +34,13 @@ class _AddItemsCardState extends State<AddItemsCard> {
     nameController.text = item == null ? "" : item.name;
     priceController.text = item == null ? "0" : item.price.toString();
     quantityController.text = item == null ? "0" : item.quantity.toString();
+    discountController.text = item == null ? "0" : item.discount.toString();
 
     widget.itemList[idx].barcode = barcode;
     widget.itemList[idx].name = nameController.text;
     widget.itemList[idx].price = double.parse(priceController.text);
     widget.itemList[idx].quantity = int.parse(quantityController.text);
+    widget.itemList[idx].discount = int.parse(discountController.text);
   }
 
   @override
@@ -45,6 +49,7 @@ class _AddItemsCardState extends State<AddItemsCard> {
     nameController.dispose();
     priceController.dispose();
     quantityController.dispose();
+    discountController.dispose();
     super.dispose();
   }
 
@@ -57,6 +62,7 @@ class _AddItemsCardState extends State<AddItemsCard> {
     nameController.text = item.name;
     priceController.text = item.price.toString();
     quantityController.text = item.quantity.toString();
+    discountController.text = item.discount.toString();
 
     return Row(
       children: [
@@ -139,13 +145,43 @@ class _AddItemsCardState extends State<AddItemsCard> {
             maxLength: 5,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onChanged: (val) {
-              widget.itemList[idx].quantity = int.parse(val);
+              if (val.isEmpty) {
+                widget.itemList[idx].quantity = 0;
+              } else {
+                widget.itemList[idx].quantity = int.parse(val);
+              }
             },
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
               hintText: "Quantity",
               hintStyle: TextStyle(color: Colors.red),
               counterText: '',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(width: 1),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 20),
+        SizedBox(
+          width: 120,
+          child: TextField(
+            controller: discountController,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            onChanged: (val) {
+              if (val.isEmpty) {
+                widget.itemList[idx].discount = 0;
+              } else {
+                widget.itemList[idx].discount = int.parse(val);
+              }
+            },
+            keyboardType: TextInputType.number,
+            maxLength: 2,
+            decoration: const InputDecoration(
+              hintText: "Discount",
+              hintStyle: TextStyle(color: Colors.red),
+              counterText: '',
+              prefixIcon: Icon(Icons.currency_rupee_sharp),
               border: OutlineInputBorder(
                 borderSide: BorderSide(width: 1),
               ),

@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 
 import 'package:inventory_app/models/item.dart';
+import 'package:quiver/strings.dart';
 
 class Bill {
   String billNo;
@@ -68,6 +69,7 @@ class Bill {
   @override
   String toString() {
     int total = 0;
+    int totalDiscount = 0;
 
     String bill = "";
     bill += '\n${"Shri Govind Shopping Mart!".padLeft(38, " ")}\n\n';
@@ -84,10 +86,12 @@ class Bill {
 
       bill += " ${idx + 1}.${item.toStringForBill()}\n";
       total += item.total;
+      totalDiscount += item.discount * item.quantity;
     }
 
     bill += " Order Total:${'Rs.$total'.padLeft(36, ' ')}\n\n";
     bill += "".padLeft(50, "*");
+    bill += '\n${center("You saved Rs.$totalDiscount", 50, " ")}\n';
     bill += '\n${"Thank you for shopping 😊".padLeft(37, " ")}\n';
 
     return bill;

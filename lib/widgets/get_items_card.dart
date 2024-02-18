@@ -34,14 +34,14 @@ class _GetItemsCardState extends State<GetItemsCard> {
     int discount = widget.itemList[idx].discount;
     int quantity = widget.itemList[idx].quantity;
 
-    return (((price * (100 - discount)) / 100) * quantity).toInt();
+    return ((price - discount) * quantity).toInt();
   }
 
   void updateItemTile(String barcode) {
     Item? item = widget.map[barcode];
     nameController.text = item == null ? "" : item.name;
     priceController.text = item == null ? "0" : item.price.toString();
-    // quantityController.text = item == null ? "0" : item.quantity.toString();
+    quantityController.text = "";
     discountController.text = item == null ? "0" : item.discount.toString();
 
     widget.itemList[idx].barcode = barcode;
@@ -184,30 +184,13 @@ class _GetItemsCardState extends State<GetItemsCard> {
         ),
         const SizedBox(width: 20),
         SizedBox(
-          width: 90,
+          width: 120,
           child: TextField(
             controller: discountController,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (val) {
-              if (val.isEmpty) {
-                widget.itemList[idx].discount = 0;
-              } else {
-                widget.itemList[idx].discount = int.parse(val);
-              }
-
-              totalController.text = calculateTotal().toString();
-              widget.itemList[idx].total = int.parse(totalController.text);
-            },
-            keyboardType: TextInputType.number,
-            maxLength: 2,
+            readOnly: true,
             decoration: const InputDecoration(
-              hintText: "Discount",
-              hintStyle: TextStyle(color: Colors.red),
-              counterText: '',
-              suffix: Text(
-                "%",
-                style: TextStyle(color: Colors.black),
-              ),
+              labelText: "Discount",
+              prefixIcon: Icon(Icons.currency_rupee_sharp),
               border: OutlineInputBorder(
                 borderSide: BorderSide(width: 1),
               ),

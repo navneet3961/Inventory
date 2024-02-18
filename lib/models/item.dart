@@ -63,14 +63,14 @@ class Item {
 
   @override
   String toString() {
-    return '$barcode,$name,$price,$quantity';
+    return '$barcode,$name,$price,$quantity,$discount';
   }
 
   String toStringForBill() {
     String item = "";
     item += " ${name.length > 45 ? name.substring(0, 45) : name}\n";
     item +=
-        " Price: ${'Rs.$price'.padRight(10, ' ')}    Qty: ${'$quantity'.padRight(5, ' ')}    Discount: ${'$discount%'.padLeft(3, ' ')}\n";
+        " Price: ${'Rs.$price'.padRight(10, ' ')}   Qty: ${'$quantity'.padRight(5, ' ')}  Discount: Rs.${'$discount'.padRight(3, ' ')}\n";
     item += " Subtotal:${'Rs.$total'.padLeft(39, ' ')}\n";
     return item;
   }
